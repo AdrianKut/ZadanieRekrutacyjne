@@ -6,13 +6,13 @@ public class EnemyManager : Singleton<EnemyManager>
 {
     [SerializeField] private EnemyInstance m_EnemyInstanceObject = null;
     [SerializeField] private Transform m_EnemyInstanceTransform = null;
-    [SerializeField] private int m_AmountOfObjects;
+    [SerializeField] private int m_AmountOfObjects = 1000;
     [SerializeField] private float m_SpawnDelay = 0.05f;
-    private List<EnemyInstance> m_ListGameObjectPool;
-
-    private Coroutine m_Coroutine;
 
     [SerializeField] private BoxCollider2D m_SpawnArea;
+
+    private List<EnemyInstance> m_ListGameObjectPool;
+    private Coroutine m_SpawnEnemyCoroutine;
 
     protected override void Awake()
     {
@@ -22,16 +22,12 @@ public class EnemyManager : Singleton<EnemyManager>
 
     private void Start()
     {
-        m_Coroutine = StartCoroutine( SpawnEnemies() );
+        m_SpawnEnemyCoroutine = StartCoroutine( SpawnEnemies() );
     }
 
     private void OnDestroy()
     {
-        if( m_Coroutine != null )
-        {
-            StopCoroutine( m_Coroutine );
-            m_Coroutine = null;
-        }
+        CoroutineExtension.KillCoroutine( this, ref m_SpawnEnemyCoroutine );
     }
 
     private IEnumerator SpawnEnemies()
@@ -82,4 +78,11 @@ public class EnemyManager : Singleton<EnemyManager>
 
         return new Vector2( x, y );
     }
+
+    #region GET/SET
+    public int GetEnemiesCount()
+    {
+        return m_AmountOfObjects;
+    }
+    #endregion
 }

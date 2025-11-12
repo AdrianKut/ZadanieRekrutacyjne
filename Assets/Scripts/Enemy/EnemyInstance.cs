@@ -8,17 +8,28 @@ public class EnemyInstance : MonoBehaviour
     [Space]
     [SerializeField] private float m_OffsetScreenMin = 0.05f;
     [SerializeField] private float m_OffsetScreenMax = 0.95f;
-    [SerializeField] private Transform m_Player = null;
     [SerializeField] private Rigidbody2D m_Rigidbody2D = null;
 
+    [Header( "Colorize" )]
+    [SerializeField] private SpriteRenderer m_SpriteRenderer = null;
+    [SerializeField] private Color32 m_OnTouchedColor = Color.red;
+
     [Space]
-    [SerializeField] private float m_MoveSpeed;
-    private bool m_CanMove = false;
+    [SerializeField] private float m_MoveSpeed = 0.5f;
+
     private int ID = 0;
+    private bool m_CanMove = false;
+    private ScoreManager m_ScoreManager = null;
+    private Transform m_Player = null;
 
     private void Start()
     {
         m_Player = PlayerManager.Instance.GetPlayerTransform();
+        m_ScoreManager = GameManager.Instance.GetScoreManager();
+        if( m_ScoreManager == null )
+        {
+            Debug.LogError( "Missing Score Manager" );
+        }
     }
 
     public void Initialize( int index )
@@ -40,10 +51,14 @@ public class EnemyInstance : MonoBehaviour
 
     private void OnCollisionEnter2D( Collision2D collision )
     {
-        if( collision != null && collision.gameObject.tag == PlayerManager.PlayerTag )
+        if( collision != null
+            && collision.gameObject.tag == PlayerManager.PlayerTag )
         {
             m_CanMove = false;
             m_Rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+            m_SpriteRenderer.color = m_OnTouchedColor;
+
+            m_ScoreManager.OnPlayerEnemyTouched?.Invoke();
         }
     }
 

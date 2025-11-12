@@ -7,11 +7,6 @@ public class PlayerInGameInputManager : MonoBehaviour
     private PlayerControls m_PlayerControls = null;
     private InputAction m_EscapeAction;
 
-    private void Awake()
-    {
-        Initialize();
-    }
-
     public void Initialize()
     {
         m_PlayerControls = new PlayerControls();
@@ -20,11 +15,6 @@ public class PlayerInGameInputManager : MonoBehaviour
         m_EscapeAction = m_PlayerControls.Player.Escape;
         m_EscapeAction.Enable();
         m_EscapeAction.performed += EscapeInputPerformed;
-    }
-
-    private void OnDestroy()
-    {
-        UnInitialize();
     }
 
     public void UnInitialize()

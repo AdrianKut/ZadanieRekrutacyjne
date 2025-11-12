@@ -39,29 +39,27 @@ public class UIManager : MonoBehaviour
 
     private void OnNavigate( Vector2 direction )
     {
-        GameObject currentGameObject = EventSystem.current.currentSelectedGameObject;
-        if( currentGameObject == null )
-        {
-            return;
-        }
+        var current = EventSystem.current.currentSelectedGameObject;
+        if( current == null ) return;
 
-        Selectable selectable = currentGameObject.GetComponent<Selectable>();
-        if( selectable == null )
-        {
-            return;
-        }
+        var selectable = current.GetComponent<Selectable>();
+        if( selectable == null ) return;
 
         Selectable next = null;
 
-        if( direction.y > 0 ) next = selectable.FindSelectableOnUp();
-        else if( direction.y < 0 ) next = selectable.FindSelectableOnDown();
-        else if( direction.x > 0 ) next = selectable.FindSelectableOnRight();
-        else if( direction.x < 0 ) next = selectable.FindSelectableOnLeft();
+        if( Mathf.Abs( direction.x ) > Mathf.Abs( direction.y ) )
+        {
+            if( direction.x > 0 ) next = selectable.FindSelectableOnRight();
+            else if( direction.x < 0 ) next = selectable.FindSelectableOnLeft();
+        }
+        else
+        {
+            if( direction.y > 0 ) next = selectable.FindSelectableOnUp();
+            else if( direction.y < 0 ) next = selectable.FindSelectableOnDown();
+        }
 
         if( next != null )
-        {
             next.Select();
-        }
     }
 
     private void OnSubmit()
